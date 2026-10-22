@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA - Universitas Terbuka</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <img src="assets/svg/logo-ut.svg" alt="Logo Universitas Terbuka">
+            </div>
+            <h1>SITTA</h1>
+            <p>Sistem Informasi Tiras dan Transaksi Bahan Ajar</p>
+            <span>Universitas Terbuka</span>
+        </header>
+
+        <main class="container">
+            <h2>Selamat Datang</h2>
+            <p>
+                Sistem pengelolaan stok dan pemesanan bahan ajar
+                Universitas Terbuka.
+            </p>
+
+            <div class="menu-grid">
+                <a href="stok.html" class="menu-card">
+                    <h3>Stok Bahan Ajar</h3>
+                    <p>Kelola stok, filter, dan status bahan ajar.</p>
+                    <span>Buka Halaman →</span>
+                </a>
+
+                <a href="tracking.html" class="menu-card">
+                    <h3>Tracking Delivery Order</h3>
+                    <p>Tambah pesanan dan pantau pengiriman bahan ajar.</p>
+                    <span>Buka Halaman →</span>
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 SITTA - Universitas Terbuka</p>
+        </footer>
+    </div>
+
+   <script src="./node_modules/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                namaAplikasi: 'SITTA'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "tugas2-vue-ut",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "http-server . -p 8080 -c-1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "vue": "^2.7.16"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

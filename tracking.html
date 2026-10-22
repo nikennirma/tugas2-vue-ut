@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA - Tracking Delivery Order</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/stok.css">
+    <link rel="stylesheet" href="./css/tracking.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <img src="assets/svg/logo-ut.svg" alt="Logo Universitas Terbuka">
+            </div>
+            <h1>SITTA</h1>
+            <p>Sistem Informasi Tiras dan Transaksi Bahan Ajar</p>
+            <nav class="nav">
+                <a href="/index.html">Beranda</a>
+                <a href="/stok.html" >Stok Bahan Ajar</a>
+                <a href="/tracking.html"class="active">Tracking DO</a>
+            </nav>
+        </header>
+
+
+        <main class="container">
+            <!-- Form Tambah Delivery Order -->
+            <section class="panel">
+                <h2>Tambah Delivery Order Baru</h2>
+
+                <form @submit.prevent="tambahDO">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label for="nomorDOBaru">Nomor DO</label>
+                            <input
+                                id="nomorDOBaru"
+                                type="text"
+                                :value="nomorDOBaru"
+                                readonly
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="nim">NIM</label>
+                            <input
+                                id="nim"
+                                type="text"
+                                v-model.trim="form.nim"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="nama">Nama</label>
+                            <input
+                                id="nama"
+                                type="text"
+                                v-model.trim="form.nama"
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label for="ekspedisi">Ekspedisi</label>
+                            <select
+                                id="ekspedisi"
+                                v-model="form.ekspedisi"
+                                required
+                            >
+                                <option value="" disabled>Pilih ekspedisi</option>
+                                <option
+                                    v-for="item in ekspedisiList"
+                                    :key="item"
+                                    :value="item"
+                                >
+                                    {{ item }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="paket">Paket Bahan Ajar</label>
+                            <select
+                                id="paket"
+                                v-model="form.paket"
+                                required
+                            >
+                                <option value="" disabled>Pilih paket</option>
+                                <option
+                                    v-for="item in paketList"
+                                    :key="item.kode"
+                                    :value="item.kode"
+                                >
+                                    {{ item.kode }} - {{ item.nama }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="tanggalKirim">Tanggal Kirim</label>
+                            <input
+                                id="tanggalKirim"
+                                type="date"
+                                v-model="form.tanggalKirim"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div v-if="paketTerpilih" class="field">
+                        <label>Detail Isi Paket</label>
+                        <div class="package-detail">
+                            <p><strong>{{ paketTerpilih.kode }}</strong></p>
+                            <p>{{ paketTerpilih.nama }}</p>
+                            <ul>
+                                <li v-for="kode in paketTerpilih.isi" :key="kode">
+                                    {{ kode }} — {{ judulBahanAjar(kode) }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Total Harga</label>
+                        <input
+                            type="text"
+                            :value="formatRupiah(paketTerpilih ? paketTerpilih.harga : 0)"
+                            readonly
+                        >
+                    </div>
+
+                    <p v-if="pesanForm" class="message">{{ pesanForm }}</p>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Simpan Delivery Order</button>
+                    </div>
+                </form>
+            </section>
+            <section class="panel">
+                <h2>Tracking Delivery Order</h2>
+                <p>Masukkan nomor Delivery Order untuk melihat status pengiriman.</p>
+
+                <form @submit.prevent="cariDO">
+                    <label for="nomorDO">Nomor Delivery Order</label>
+                    <div class="search-row">
+                        <input
+                            id="nomorDO"
+                            type="text"
+                            v-model.trim="nomorDO"
+                            placeholder="Contoh: DO2025-0001"
+                        >
+                        <button type="submit">Cari DO</button>
+                    </div>
+                </form>
+
+                <p v-if="pesan" class="message">{{ pesan }}</p>
+            </section>
+
+            <section class="panel" v-if="doTerpilih">
+                <h2>Informasi Pengiriman</h2>
+
+                <div class="detail-grid">
+                    <div>
+                        <strong>Nomor DO</strong>
+                        <p>{{ nomorDOHasil }}</p>
+                    </div>
+                    <div>
+                        <strong>NIM</strong>
+                        <p>{{ doTerpilih.nim }}</p>
+                    </div>
+                    <div>
+                        <strong>Nama Penerima</strong>
+                        <p>{{ doTerpilih.nama }}</p>
+                    </div>
+                    <div>
+                        <strong>Status</strong>
+                        <p><span class="status-badge">{{ doTerpilih.status }}</span></p>
+                    </div>
+                    <div>
+                        <strong>Ekspedisi</strong>
+                        <p>{{ doTerpilih.ekspedisi }}</p>
+                    </div>
+                    <div>
+                        <strong>Tanggal Kirim</strong>
+                        <p>{{ doTerpilih.tanggalKirim }}</p>
+                    </div>
+                    <div>
+                        <strong>Paket</strong>
+                        <p>{{ doTerpilih.paket }}</p>
+                    </div>
+                    <div>
+                        <strong>Total</strong>
+                        <p>{{ formatRupiah(doTerpilih.total) }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" v-if="doTerpilih">
+                <h2>Riwayat Perjalanan</h2>
+
+                <p v-if="!doTerpilih.perjalanan.length">
+                    Belum ada riwayat perjalanan.
+                </p>
+
+                <div
+                    class="tracking-item"
+                    v-for="(item, index) in doTerpilih.perjalanan"
+                    :key="index"
+                >
+                    <div class="tracking-dot"></div>
+                    <div>
+                        <strong>{{ item.keterangan }}</strong>
+                        <p>{{ item.waktu }}</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            SITTA &copy; 2026
+        </footer>
+    </div>
+
+    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script src="./js/dataBahanAjar.js"></script>
+    <script src="./js/tracking-app.js"></script>
+</body>
+</html>
